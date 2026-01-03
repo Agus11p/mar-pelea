@@ -1,0 +1,45 @@
+{
+    "rules": {
+        ".read": true,
+        "ranking": {
+            ".indexOn": [
+                "points",
+                "name"
+            ],
+            "$uid": {
+                ".write": "auth != null && auth.uid === $uid"
+            }
+        },
+        "invites": {
+            "$uid": {
+                ".write": "auth != null",
+                ".read": "auth != null && auth.uid === $uid"
+            }
+        },
+        "queue": {
+            ".indexOn": [
+                "timestamp"
+            ],
+            "$uid": {
+                ".write": "auth != null && (auth.uid === $uid || !newData.exists())"
+            }
+        },
+        "games": {
+            ".indexOn": [
+                "status",
+                "createdAt"
+            ],
+            ".write": "auth != null"
+        },
+        "server": {
+            "activeUsers": {
+                "$uid": {
+                    ".write": "auth != null && auth.uid === $uid"
+                }
+            },
+            "stats": {
+                ".write": "auth != null"
+            }
+        }
+    }
+}

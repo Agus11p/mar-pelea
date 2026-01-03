@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>¡Vinculado! - Mar Si Quiere Pelea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #1a0b2e 0%, #050208 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .success-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 4rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 47, 146, 0.3);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 100px rgba(255, 47, 146, 0.2);
+            animation: cardPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        @keyframes cardPop {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .check-icon {
+            font-size: 5rem;
+            color: #00ff88;
+            margin-bottom: 2rem;
+            display: inline-block;
+            animation: checkBounce 1s infinite alternate;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+        }
+
+        @keyframes checkBounce {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 47, 146, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 47, 146, 0.3);
+            color: #ff2f92;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .cta-button {
+            background: #ff2f92;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 47, 146, 0.3);
+            width: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 47, 146, 0.5);
+            background: #ff4d9d;
+        }
+
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="success-card">
+        <div class="check-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h1>¡CUENTA VINCULADA!</h1>
+        <p>Tu Nick de Twitch ahora está sincronizado con tu cuenta de Google. Tus puntos están a salvo.</p>
+
+        <div class="user-badge">
+            <i class="fa-brands fa-twitch"></i>
+            <span id="display-nick">Cargando...</span>
+        </div>
+
+        <button class="cta-button" onclick="window.location.href='index.html'">
+            ENTRAR AL LOBBY
+        </button>
+    </div>
+
+    <script>
+        const nick = localStorage.getItem('msgp_username');
+        if (nick) {
+            document.getElementById('display-nick').textContent = JSON.parse(nick);
+        }
+
+        // Crear algunas partículas de fondo
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.style.position = 'absolute';
+            p.style.width = '4px';
+            p.style.height = '4px';
+            p.style.background = '#ff2f92';
+            p.style.borderRadius = '50%';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.opacity = Math.random();
+            p.style.animation = `float ${3 + Math.random() * 5}s infinite alternate`;
+            particlesContainer.appendChild(p);
+        }
+    </script>
+</body>
+
+</html>

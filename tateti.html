@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En Batalla - Mar Si Quiere Pelea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/game.css">
+    <script>
+        (function () {
+            const sessionActive = localStorage.getItem('msgp_session_active');
+            if (!sessionActive) window.location.href = 'login.html';
+        })();
+    </script>
+    <script src="main.js?v=4"></script>
+</head>
+
+<body data-page="tateti" class="dashboard-body">
+    <div class="msgp-loader-overlay" id="global-loader">
+        <div class="neon-spinner"></div>
+    </div>
+    <header>
+        <div class="brand">
+            <i class="fa-solid fa-gamepad" style="color:var(--accent-pink);"></i>
+            Mar Si Quiere Pelea
+        </div>
+        <div class="live-status">
+            <span class="live-badge">● BATTLE IN PROGRESS</span>
+        </div>
+        <div class="header-controls">
+            <button onclick="window.location.href='index.html'" class="control-btn" title="Abandonar Partida">
+                <i class="fa-solid fa-flag"></i> RENDIRSE
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <aside class="left-col" style="opacity:0.3; pointer-events:none;">
+            <div class="panel">
+                <div class="panel-title"><span><i class="fa-solid fa-satellite-dish"></i> LIVE FIGHTS</span></div>
+                <div id="live-fights-container" style="text-align:center; padding:1rem;">---</div>
+            </div>
+        </aside>
+
+        <main class="center-col">
+            <!-- El contenido se inyecta vía JS (renderArena) -->
+            <div id="game-loading" style="text-align:center; padding:5rem;">
+                <h2 style="color:var(--accent-pink); animation: pulse 1s infinite;">SINCRONIZANDO ARENA...</h2>
+            </div>
+        </main>
+
+        <aside class="right-col" style="opacity:0.3; pointer-events:none;">
+            <div class="panel">
+                <div class="panel-title"><span><i class="fa-solid fa-trophy"></i> RANKING</span></div>
+                <ul class="ranking-list">
+                    <li>---</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Mar Si Quiere Pelea</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body.login-body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #2a143d 0%, #0d0614 100%);
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: rgba(15, 7, 20, 0.95);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #ff2f92);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-option {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group-custom {
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .input-group-custom i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff2f92;
+        }
+
+        .login-input-custom {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            padding: 14px 14px 14px 42px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login-input-custom:focus {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 15px rgba(255, 47, 146, 0.2);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-google {
+            background: #fff;
+            color: #111;
+        }
+
+        .btn-google:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-guest {
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+        }
+
+        .btn-guest:hover {
+            border-color: #ff2f92;
+            color: #fff;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        #error-msg {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 47, 146, 0.2);
+            border-top-color: var(--accent-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="login-body">
+    <div class="msgp-loader-overlay" id="global-loader">
+        <div class="neon-spinner"></div>
+    </div>
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="login-card">
+        <div class="card-header" style="text-align:center;">
+            <i class="fa-solid fa-gamepad" style="font-size: 3rem; color: #ff2f92; margin-bottom: 1rem;"></i>
+            <h1>MAR PELEA</h1>
+            <p style="color:#666; margin-bottom: 2rem;">Ingresa tu Nick para entrar a la arena.</p>
+        </div>
+
+        <div id="error-msg"></div>
+
+        <!-- PASO 1: NICK -->
+        <div class="auth-option">
+            <span
+                style="font-size: 0.7rem; font-weight: 800; color: #ff2f92; text-transform: uppercase; letter-spacing: 1px;">Tu
+                Nick de Twitch</span>
+            <div class="input-group-custom">
+                <i class="fa-brands fa-twitch"></i>
+                <input type="text" id="twitch-user" class="login-input-custom" placeholder="Ej: MarStreamer">
+            </div>
+        </div>
+
+        <!-- PASO 2: ACCESO -->
+        <div style="margin-top: 2rem;">
+            <button id="btn-google" class="btn-action btn-google">
+                <i class="fa-brands fa-google"></i> Entrar con Google
+            </button>
+
+            <div
+                style="display:flex; align-items:center; margin: 1.5rem 0; color: #333; font-size: 0.7rem; font-weight: 800;">
+                <div style="flex:1; height:1px; background:#222;"></div>
+                <span style="padding:0 10px;">O SIN VINCULAR</span>
+                <div style="flex:1; height:1px; background:#222;"></div>
+            </div>
+
+            <button id="btn-guest" class="btn-action btn-guest">
+                <i class="fa-solid fa-user-secret"></i> Modo Invitado (Rápido)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        const twitchInput = document.getElementById('twitch-user');
+        const errorEl = document.getElementById('error-msg');
+        const loading = document.getElementById('loading');
+
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+        function showLoading(show) {
+            loading.style.display = show ? 'flex' : 'none';
+        }
+
+        function showError(msg) {
+            errorEl.textContent = msg;
+            errorEl.style.display = 'block';
+            errorEl.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getNick() {
+            const nick = twitchInput.value.trim();
+            if (nick.length < 3) {
+                showError("¡Ingresa un Nick de al menos 3 letras!");
+                return null;
+            }
+            return nick;
+        }
+
+        async function finishLogin(user, nick, isGoogle = false) {
+            try {
+                // PRIMERO: Marcar sesión activa
+                localStorage.setItem('msgp_session_active', 'true');
+                localStorage.setItem('msgp_username', JSON.stringify(nick));
+
+                if (user) {
+                    await user.updateProfile({ displayName: nick }).catch(e => console.warn(e));
+                }
+
+                if (isGoogle) {
+                    window.location.replace('vincular.html');
+                    return;
+                }
+
+                const params = new URLSearchParams(window.location.search);
+                const ret = params.get('returnTo');
+                const target = (ret && ret !== 'null') ? decodeURIComponent(ret) : 'index.html';
+                window.location.replace(target);
+            } catch (e) {
+                showLoading(false);
+                showError("Error al entrar: " + e.message);
+            }
+        }
+
+        // GOOGLE
+        document.getElementById('btn-google').onclick = async () => {
+            const nick = getNick();
+            if (!nick) return;
+            showLoading(true);
+            try {
+                const result = await auth.signInWithPopup(googleProvider);
+                finishLogin(result.user, nick, true);
+            } catch (e) {
+                showLoading(false);
+                showError("Error Google: " + e.message);
+            }
+        };
+
+        // GUEST
+        document.getElementById('btn-guest').onclick = async () => {
+            const nick = getNick();
+            if (!nick) return;
+            showLoading(true);
+            try {
+                const result = await auth.signInAnonymously();
+                finishLogin(result.user, nick, false);
+            } catch (e) {
+                showLoading(false);
+                showError(e.message);
+            }
+        };
+
+        // El login maneja su propio loader manual para Auth persistente
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Si ya está logueado, main.js redirigirá, pero ocultamos el negro mientras tanto
+                setTimeout(hideLoader, 500);
+            } else {
+                hideLoader();
+            }
+        });
+    </script>
+</body>
+
+</html>
